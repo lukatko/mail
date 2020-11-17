@@ -3,7 +3,6 @@
 
 {% block body %}
     <h2>{{ request.user.email }}</h2>
-
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
     <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
     <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
@@ -12,11 +11,21 @@
     <hr>
 
     <div id="emails-view">
+        <a href="" id = "email-link">
+            <div id = "email">
+                <div id = "email-subject">
+                    <b>kancur876@gmail.com</b>   Stretneme sa zajtra
+                </div>
+                <div id = "date">
+                    Date
+                </div>
+            </div>
+        </a>
     </div>
 
     <div id="compose-view">
         <h3>New Email</h3>
-        <form id="compose-form">
+        <form id="compose-form" onsubmit = "return false">
             <div class="form-group">
                 From: <input disabled class="form-control" value="{{ request.user.email }}">
             </div>
@@ -27,8 +36,12 @@
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
+            <input type="submit" class="btn btn-primary" id = "submit"/>
         </form>
+    </div>
+
+    <div id = "view-email">
+        
     </div>
 {% endblock %}
 
