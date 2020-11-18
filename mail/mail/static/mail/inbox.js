@@ -20,7 +20,9 @@ function compose_email() {
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-recipients').disabled = false;
   document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-subject').disabled = false
   document.querySelector('#compose-body').value = '';
 }
 
@@ -57,7 +59,7 @@ function load_mailbox(mailbox) {
       {
         document.querySelector(`#email${element.id}`).style.background = 'gray';
       }
-      document.querySelector(`#email${element.id}`).addEventListener('click', () => view_email(element.id));
+      document.querySelector(`#email${element.id}`).addEventListener('click', () => view_email(element.id, mailbox));
       
 
     });
@@ -87,7 +89,7 @@ function create_email() {
 
 }
 
-function view_email(id) {
+function view_email(id, mailbox) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#view-email').style.display = 'block';
@@ -112,6 +114,14 @@ function view_email(id) {
     {
       document.querySelector('#Archive').innerHTML = 'Unarchive';
     }
+
+    if (mailbox === 'sent')
+    {
+      document.querySelector('#Reply').style.display = 'none';
+      document.querySelector('#Archive').style.display = 'none';
+    }
+
+    document.querySelector("#Reply").addEventListener('click', () => reply_to_email(data.id));
 
     fetch(`/emails/${data.id}`, {
       method: 'PUT',
@@ -152,4 +162,32 @@ function view_email(id) {
 
   });
   
+}
+
+function reply_to_email(id) {
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#view-email').style.display = 'none'
+  document.querySelector('#compose-view').style.display = 'block';
+
+  fetch(`/emails/${id}`)
+  .then(response => response.json())
+  .then(data => {
+    document.querySelector('#compose-recipients').value = data.sender;
+    document.querySelector('#compose-recipients').disabled = true;
+
+    if (data.subject.length < 3 || data.subject.slice(0, 3) !== "Re:")
+    {
+      document.querySelector('#compose-subject').value = `Re: ${data.subject}`;
+    }
+    else
+    {
+      document.querySelector('#compose-subject').value = data.subject;
+    }
+    document.querySelector('#compose-subject').disabled = true;
+
+    document.querySelector('#compose-body').value = `On ${data.timestamp} ${data.sender} wrote: ${data.body}`;
+  }
+  )
+ 
 }
