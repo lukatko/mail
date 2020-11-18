@@ -51,7 +51,12 @@ function load_mailbox(mailbox) {
             </div>
         `;
 
+
       document.querySelector('#emails-view').append(div);
+      if (element.read)
+      {
+        document.querySelector(`#email${element.id}`).style.background = 'gray';
+      }
       document.querySelector(`#email${element.id}`).addEventListener('click', () => view_email(element.id));
       
 
@@ -98,9 +103,53 @@ function view_email(id) {
         <p><b>Subject:</b>&nbsp;${data.subject}</p>
         <p><b>Timestamp</b>&nbsp;${data.timestamp}</p>
         <button class="btn btn-sm btn-outline-primary" id="Reply">Reply</button>
+        <button class="btn btn-sm btn-outline-primary" id="Archive">Archive</button>
       </div>
       <p>${data.body}</p>
     `;
-  })
+
+    if (data.archived)
+    {
+      document.querySelector('#Archive').innerHTML = 'Unarchive';
+    }
+
+    fetch(`/emails/${data.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: true
+      })
+    })
+    .then(response => response.json())
+    .then(
+      document.querySelector("#Archive").addEventListener('click', () => {
+        if (!data.archived)
+        {
+          fetch(`/emails/${data.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: true
+            })
+          })
+          .then(response => response.json())
+          .then(load_mailbox("inbox"));
+        }
+        else
+        {
+          fetch(`/emails/${data.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: false
+            })
+          })
+          .then(response => response.json())
+          .then(load_mailbox("inbox"));
+        }
+      })
+    );
+    
+
+
+
+  });
   
 }
