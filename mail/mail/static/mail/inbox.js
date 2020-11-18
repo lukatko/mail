@@ -22,7 +22,7 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-recipients').disabled = false;
   document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-subject').disabled = false
+  document.querySelector('#compose-subject').disabled = false;
   document.querySelector('#compose-body').value = '';
 }
 
